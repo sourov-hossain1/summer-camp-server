@@ -41,6 +41,25 @@ async function run() {
             res.send(result);
         });
 
+        // class cart collection
+        app.get('/carts', async(req, res) =>{
+            const email = req.query.email;
+            console.log(email)
+            if(!email){
+                res.send([]);
+            }
+            const query = {email: email};
+            const result = await cartsCollection.find(query).toArray();
+            res.send(result);
+        })
+
+        app.post('/carts', async(req, res) => {
+            const item = req.body;
+            console.log(item);
+            const result = await cartsCollection.insertOne(item);
+            res.send(result);
+        })
+
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
