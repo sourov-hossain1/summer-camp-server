@@ -28,11 +28,18 @@ async function run() {
 
 
         const popularCollection = client.db("summerDB").collection("popular");
+        const classesCollection = client.db("summerDB").collection("classes");
+        const cartsCollection = client.db("summerDB").collection("carts");
 
         app.get('/popular', async(req, res) => {
             const result = await popularCollection.find().toArray();
             res.send(result);
-        })
+        });
+
+        app.get('/classes', async(req, res) => {
+            const result = await classesCollection.find().toArray();
+            res.send(result);
+        });
 
 
         // Send a ping to confirm a successful connection
