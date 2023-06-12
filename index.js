@@ -33,6 +33,14 @@ async function run() {
         const cartsCollection = client.db("summerDB").collection("carts");
         const usersCollection = client.db("summerDB").collection("users");
 
+
+        app.post('/jwt', (req, res) => {
+            const user = req.body;
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1h'})
+
+            res.send({token})
+        })
+
         // popular api
         app.get('/popular', async (req, res) => {
             const result = await popularCollection.find().toArray();
