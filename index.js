@@ -33,19 +33,19 @@ async function run() {
         const usersCollection = client.db("summerDB").collection("users");
 
         // popular api
-        app.get('/popular', async(req, res) => {
+        app.get('/popular', async (req, res) => {
             const result = await popularCollection.find().toArray();
             res.send(result);
         });
 
         // calsses api
-        app.get('/classes', async(req, res) => {
+        app.get('/classes', async (req, res) => {
             const result = await classesCollection.find().toArray();
             res.send(result);
         });
 
         // class cart collection
-        app.get('/carts', async(req, res) =>{
+        app.get('/carts', async (req, res) => {
             // const email = req.query.email;
             // console.log(email)
             // if(!email){
@@ -56,28 +56,33 @@ async function run() {
             res.send(result);
         })
 
-       app.post('/carts', async(req, res) =>{
-        const items = req.body;
-        const result = await cartsCollection.insertOne(items);
-        res.send(result);
-       })
+        app.post('/carts', async (req, res) => {
+            const items = req.body;
+            const result = await cartsCollection.insertOne(items);
+            res.send(result);
+        })
 
         // users post api
-        app.post('/users', async(req, res) =>{
+        app.post('/users', async (req, res) => {
             const user = req.body;
+            const query = {email: user.email}
+            const existingUser = await usersCollection.findOne(query);
+            if(existingUser){
+                return res.send({message: 'user already exists'})
+            }
             const result = await usersCollection.insertOne(user);
             res.send(result);
-           })
+        })
 
 
-       
 
-    app.delete('/carts/:id', async(req, res) =>{
-        const id = req.params.id;
-        const query = {_id: new ObjectId(id)}
-        const result = await cartsCollection.deleteOne(query);
-        res.send(result);
-    })
+
+        app.delete('/carts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await cartsCollection.deleteOne(query);
+            res.send(result);
+        })
 
 
         // Send a ping to confirm a successful connection
