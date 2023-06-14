@@ -50,6 +50,7 @@ async function run() {
         const usersCollection = client.db("summerDB").collection("users");
         const addsCollection = client.db("summerDB").collection("adds");
         const instructorsCollection = client.db("summerDB").collection("instructor");
+        const popinsCollection = client.db("summerDB").collection("popins");
 
 
         app.post('/jwt', (req, res) => {
@@ -164,6 +165,11 @@ async function run() {
         // instructor data
         app.get('/instructor', async (req, res) => {
             const result = await instructorsCollection.find().toArray();
+            res.send(result);
+        });
+
+        app.get('/popins', async (req, res) => {
+            const result = await popinsCollection.find().toArray();
             res.send(result);
         });
 
