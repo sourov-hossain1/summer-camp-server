@@ -41,7 +41,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
 
 
         const popularCollection = client.db("summerDB").collection("popular");
@@ -71,11 +71,14 @@ async function run() {
             const result = await classesCollection.find().toArray();
             res.send(result);
         });
+        app.get('/carts', async (req, res) => {
+            const result = await cartsCollection.find().toArray();
+            res.send(result);
+        });
 
         // class cart collection
         app.get('/carts', verifyJwt, async (req, res) => {
             const email = req.query.email;
-            // console.log(email)
             if (!email) {
                 res.send([]);
             }
