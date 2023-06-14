@@ -49,11 +49,12 @@ async function run() {
         const cartsCollection = client.db("summerDB").collection("carts");
         const usersCollection = client.db("summerDB").collection("users");
         const addsCollection = client.db("summerDB").collection("adds");
+        const instructorsCollection = client.db("summerDB").collection("instructor");
 
 
         app.post('/jwt', (req, res) => {
             const user = req.body;
-            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '12h' })
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
 
             res.send({ token })
         })
@@ -111,6 +112,19 @@ async function run() {
             res.send(result);
         });
 
+        app.get('/users/admin/:email', verifyJwt, async(req, res) => {
+            const email = req.params.email;
+
+            if(req.decoded.email !== email){
+                res.send({admin: false})
+            }
+
+            const query = {email: email}
+            const user = await usersCollection.findOne(query);
+            const result = { admin: user?.role === 'admin' }
+            res.send(result)
+        })
+
         app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) };
@@ -140,6 +154,18 @@ async function run() {
             const result = await addsCollection.insertOne(items);
             res.send(result);
         })
+
+        app.get('/adds', async (req, res) => {
+            const result = await addsCollection.find().toArray();
+            res.send(result);
+        });
+
+
+        // instructor data
+        app.get('/instructor', async (req, res) => {
+            const result = await instructorsCollection.find().toArray();
+            res.send(result);
+        });
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
